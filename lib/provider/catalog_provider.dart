@@ -6,10 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class Catalog with ChangeNotifier {
-  List<CatalogModel> _dataF = [];
+  List<CatalogModel> _catalogProducts = [];
 
   List<CatalogModel> get products {
-    return [..._dataF];
+    return [..._catalogProducts];
   }
 
   Future<void> getData() async {
@@ -18,11 +18,9 @@ class Catalog with ChangeNotifier {
     final response = await http.get(
       Uri.parse(url),
     );
-    final List<CatalogModel> loadedCatalog = [];
     final data = jsonDecode(response.body) as Map<String, dynamic>;
-
     final trueResponse = CatalogResponse.fromJson(data);
-    _dataF = trueResponse.category!.subcategories!
+    _catalogProducts = trueResponse.category!.subcategories!
         .map(
           (e) => CatalogModel(
             id: e.id!,
@@ -32,7 +30,6 @@ class Catalog with ChangeNotifier {
         )
         .toList();
     notifyListeners();
-    print(_dataF[0].image);
   }
 }
 
@@ -42,13 +39,12 @@ class CatalogResponse {
   CatalogResponse({this.category});
 
   CatalogResponse.fromJson(Map<String, dynamic> json) {
-    category = json['category'] != null
-        ? new Category.fromJson(json['category'])
-        : null;
+    category =
+        json['category'] != null ? Category.fromJson(json['category']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (category != null) {
       data['category'] = category!.toJson();
     }
@@ -81,13 +77,13 @@ class Category {
     if (json['subcategories'] != null) {
       subcategories = <Subcategories>[];
       json['subcategories'].forEach((v) {
-        subcategories!.add(new Subcategories.fromJson(v));
+        subcategories!.add(Subcategories.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['title'] = title;
     data['image'] = image;
@@ -126,7 +122,7 @@ class Subcategories {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['title'] = title;
     data['image'] = image;

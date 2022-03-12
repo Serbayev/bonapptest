@@ -28,7 +28,7 @@ class _CatalogPageState extends State<CatalogPage> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Продукты питания',
           style: TextStyle(
             color: AppColors.textBlack,
@@ -37,13 +37,17 @@ class _CatalogPageState extends State<CatalogPage> {
       ),
       body: Consumer<Catalog>(
         builder: (context, value, child) {
-          return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, childAspectRatio: 1 / 1),
-            itemCount: provider.products.length,
-            itemBuilder: (ctx, i) => categories(
-                image: provider.products[i].image,
-                categoryName: provider.products[i].subCategoryName),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3, childAspectRatio: 1 / 1),
+              itemCount: provider.products.length,
+              itemBuilder: (ctx, i) => categories(
+                  id: provider.products[i].id,
+                  image: provider.products[i].image,
+                  categoryName: provider.products[i].subCategoryName),
+            ),
           );
         },
       ),
@@ -53,32 +57,42 @@ class _CatalogPageState extends State<CatalogPage> {
   Widget categories({
     required String image,
     required String categoryName,
+    required int id,
   }) {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) => SubCategoryPage(subCategoryName: ''),
+            builder: (ctx) => SubCategoryPage(
+              subCategoryName: categoryName,
+              subCategoryId: id,
+            ),
           ),
         );
       },
       child: Container(
-        margin: EdgeInsets.all(6),
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        margin: const EdgeInsets.all(6),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.1), blurRadius: 2)
             ]),
         child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
           Image.network(
-            image,
+            'https://bon-app.a-lux.dev/storage/$image',
           ),
-          SizedBox(height: 10),
-          Text(
-            categoryName,
-            style: TextStyle(fontSize: 12),
+          const SizedBox(height: 10),
+          Flexible(
+            child: Text(
+              categoryName,
+              maxLines: 1,
+              overflow: TextOverflow.fade,
+              style: const TextStyle(
+                fontSize: 11,
+              ),
+            ),
           ),
         ]),
       ),
